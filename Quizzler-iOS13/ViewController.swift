@@ -15,7 +15,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var progressBarr: UIProgressView!
     @IBOutlet weak var trueButton: UIButton!
     @IBOutlet weak var falseButton: UIButton!
-    @IBOutlet weak var progressBar: UIProgressView!
+    @IBOutlet weak var progressBarQuestion: UIProgressView!
+    @IBOutlet weak var progressBarAnswerTime: UIProgressView!
     
     // Variables
     var countdownTimer: Timer?
@@ -77,6 +78,7 @@ class ViewController: UIViewController {
         questionLabel.text = quizQuestions[questionNumber].text
         trueButton.backgroundColor = UIColor.clear
         falseButton.backgroundColor = UIColor.clear
+        progressBarQuestion.progress = Float(questionNumber + 1) / Float(quizQuestions.count)
     }
     
     func startTimer(){
@@ -87,7 +89,7 @@ class ViewController: UIViewController {
            // Increment the time passed
            timePassed += 1
            if timePassed < secondsRemaining {
-               progressBar.progress = Float(timePassed) / Float(secondsRemaining)
+               progressBarAnswerTime.progress = Float(timePassed) / Float(secondsRemaining)
            } else {
                countdownTimer?.invalidate()
                //timerLabel.text = "Done"
