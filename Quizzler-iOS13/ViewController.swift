@@ -22,9 +22,9 @@ class ViewController: UIViewController {
     
     // Constants
     let quizQuestions = [
-        ("Four + Two is equal to Six", true),
-        ("Five - Three is greater than One", true),
-        ("Three + Eight is less than Ten", false),
+        Question(text: "Four + Two is equal to Six", answer: true),
+        Question(text: "Five - Three is greater than One", answer:  true),
+        Question(text: "Three + Eight is less than Ten", answer:  false),
     ]
     
     
@@ -37,7 +37,7 @@ class ViewController: UIViewController {
     
     @IBAction func pressedAcctionButton(_ sender: UIButton) {
         let userAnswer = sender.currentTitle?.boolValue
-        let correctAnswer = quizQuestions[questionNumber].1
+        let correctAnswer = quizQuestions[questionNumber].answer
         
         if userAnswer == correctAnswer {
             print("Rigth")
@@ -54,7 +54,7 @@ class ViewController: UIViewController {
     }
     
     func updateQuestionUI(){
-        questionLabel.text = quizQuestions[questionNumber].0
+        questionLabel.text = quizQuestions[questionNumber].text
     }
 }
 
