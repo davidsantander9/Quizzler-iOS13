@@ -19,13 +19,17 @@ class ViewController: UIViewController {
     @IBOutlet weak var progressBarAnswerTime: UIProgressView!
     
     // Variables
-    var countdownTimer: Timer?
+    var countdownTimerToAnswer: Timer?
+    var countdownTimerFeedBackAnswer: Timer?
     var questionNumber = 0
-    var timePassed = 0
-    var secondsRemaining = 0
+    var timePassedToAnswer = 0
+    var secondsRemainingToAnswer = 0
+    var timePassedToShowFeedback = 0
+    var secondsRemainingFeedback = 0
     
     // Constants
     let secondsToAnswer = 30
+    let secondsToShowFeedBack = 3
     let quizQuestions = [
         Question(q: "A slug's blood is green.", a: true),
         Question(q: "Approximately one quarter of human bones are in the feet.", a: true),
@@ -46,8 +50,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateQuestionUI()
-        secondsRemaining = secondsToAnswer
-        startTimer()
+        secondsRemainingToAnswer = secondsToAnswer
+        secondsRemainingFeedback = secondsToShowFeedBack
+        startTimerToAnswer()
     }
 
     
@@ -55,10 +60,14 @@ class ViewController: UIViewController {
         let userAnswer = sender.currentTitle?.boolValue
         let correctAnswer = quizQuestions[questionNumber].answer
         
-        timePassed = 0
-        secondsRemaining = secondsToAnswer
+        timePassedToAnswer = 0
+        secondsRemainingToAnswer = secondsToAnswer
         
-        startTimer()
+        timePassedToShowFeedback = 0
+        secondsRemainingFeedback = secondsToShowFeedBack
+        
+        startTimerToAnswer()
+        startTimerToShowFeedBack()
         
         if userAnswer == correctAnswer {
             sender.backgroundColor = UIColor.green
@@ -76,22 +85,35 @@ class ViewController: UIViewController {
     
     func updateQuestionUI(){
         questionLabel.text = quizQuestions[questionNumber].text
-        trueButton.backgroundColor = UIColor.clear
-        falseButton.backgroundColor = UIColor.clear
         progressBarQuestion.progress = Float(questionNumber + 1) / Float(quizQuestions.count)
     }
     
-    func startTimer(){
-        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in self?.updateTimer()}
+    func startTimerToAnswer(){
+        countdownTimerToAnswer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in self?.updateTimer()}
+    }
+    
+    func startTimerToShowFeedBack(){
+        countdownTimerFeedBackAnswer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in self?.updateTimer2()}
+    }
+    
+    @objc func updateTimer2() {
+           // Increment the time passed
+           timePassedToShowFeedback += 1 
+        if timePassedToShowFeedback == secondsRemainingFeedback {
+            trueButton.backgroundColor = UIColor.clear
+            falseButton.backgroundColor = UIColor.clear
+            countdownTimerFeedBackAnswer?.invalidate()
+        }
+          
     }
     
     @objc func updateTimer() {
            // Increment the time passed
-           timePassed += 1
-           if timePassed < secondsRemaining {
-               progressBarAnswerTime.progress = Float(timePassed) / Float(secondsRemaining)
+           timePassedToAnswer += 1
+           if timePassedToAnswer < secondsRemainingToAnswer {
+               progressBarAnswerTime.progress = Float(timePassedToAnswer) / Float(secondsRemainingToAnswer)
            } else {
-               countdownTimer?.invalidate()
+               countdownTimerToAnswer?.invalidate()
                //timerLabel.text = "Done"
                //playSound(fileName: "alarm_sound")
            }
