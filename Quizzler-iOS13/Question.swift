@@ -11,4 +11,9 @@ import Foundation
 struct Question{
     let text: String
     let answer: Bool
+    
+    init(q: String, a: Bool) {
+        self.text = q
+        self.answer = a
+    }
 }
