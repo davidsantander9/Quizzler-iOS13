@@ -12,6 +12,7 @@ class ViewController: UIViewController {
     
     // Outlets
     @IBOutlet weak var questionLabel: UILabel!
+    @IBOutlet weak var scoreLabel: UILabel!
     @IBOutlet weak var progressBarr: UIProgressView!
     @IBOutlet weak var trueButton: UIButton!
     @IBOutlet weak var falseButton: UIButton!
@@ -29,7 +30,7 @@ class ViewController: UIViewController {
     var quizLogic = QuizLogic()
     
     // Constants
-    let secondsToAnswer = 30
+    let secondsToAnswer = 10
     let secondsToShowFeedBack = 3
     
     
@@ -44,7 +45,7 @@ class ViewController: UIViewController {
     
     @IBAction func pressedAcctionButton(_ sender: UIButton) {
         let userAnswer = sender.currentTitle?.boolValue
-        let isCorrect = quizLogic.checkAnswer(answer: userAnswer!)
+        let isAnswerCorrect = quizLogic.checkAnswer(answer: userAnswer!)
         
         timePassedToAnswer = 0
         secondsRemainingToAnswer = secondsToAnswer
@@ -55,15 +56,25 @@ class ViewController: UIViewController {
         startTimerToAnswer()
         startTimerToShowFeedBack()
         
-        sender.backgroundColor = isCorrect ? UIColor.green : UIColor.red
+        if isAnswerCorrect {
+            sender.backgroundColor = UIColor.green
+            quizLogic.setScore(newScore: quizLogic.getScore() + 1)
+        }else{
+            sender.backgroundColor = UIColor.red
+        }
         
         quizLogic.moveToNextQuestion()
-        
         updateQuestionUI()
+        
+        if quizLogic.isQuizComplete(){
+            quizLogic.setScore(newScore: 0)
+            countdownTimerToAnswer?.invalidate()
+        }
     }
     
     func updateQuestionUI(){
         questionLabel.text = quizLogic.getQuestionText()
+        scoreLabel.text = "Score: " + String(quizLogic.getScore())
         progressBarQuestion.progress = quizLogic.getQuizProgress()
     }
     
@@ -92,11 +103,19 @@ class ViewController: UIViewController {
            if timePassedToAnswer < secondsRemainingToAnswer {
                progressBarAnswerTime.progress = Float(timePassedToAnswer) / Float(secondsRemainingToAnswer)
            } else {
+               timePassedToAnswer = 0
+               secondsRemainingToAnswer = secondsToAnswer
+               
                countdownTimerToAnswer?.invalidate()
-               //timerLabel.text = "Done"
-               //playSound(fileName: "alarm_sound")
+               
+               if !quizLogic.isQuizComplete(){
+                   quizLogic.moveToNextQuestion()
+                   startTimerToAnswer()
+                   updateQuestionUI()
+               }
            }
     }
+    
 
 }
 

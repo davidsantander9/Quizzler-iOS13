@@ -10,6 +10,7 @@ import Foundation
 
 struct QuizLogic{
     
+    // Constants
     let quizQuestions = [
         Question(q: "A slug's blood is green.", a: true),
         Question(q: "Approximately one quarter of human bones are in the feet.", a: true),
@@ -25,7 +26,9 @@ struct QuizLogic{
         Question(q: "Chocolate affects a dog's heart and nervous system; a few ounces are enough to kill a small dog.",a: true)
     ]
     
+    // Variables
     var questionNumber = 0
+    var score = 0
     
     func checkAnswer(answer userAnswer: Bool) -> Bool{
         return userAnswer == quizQuestions[questionNumber].answer
@@ -40,10 +43,18 @@ struct QuizLogic{
     }
     
     func isQuizComplete() -> Bool {
-        return questionNumber < quizQuestions.count - 1
+        return questionNumber >= quizQuestions.count - 1
     }
     
     mutating func moveToNextQuestion(){
-        questionNumber = isQuizComplete() ? questionNumber + 1 : 0
+        questionNumber = isQuizComplete() ? 0 : questionNumber + 1 
+    }
+    
+    mutating func setScore(newScore: Int){
+        score = newScore
+    }
+    
+    func getScore() -> Int{
+        return score;
     }
 }
