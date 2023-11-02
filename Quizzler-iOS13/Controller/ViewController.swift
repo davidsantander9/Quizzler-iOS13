@@ -53,7 +53,6 @@ class ViewController: UIViewController {
         timePassedToShowFeedback = 0
         secondsRemainingFeedback = secondsToShowFeedBack
         
-        startTimerToAnswer()
         startTimerToShowFeedBack()
         
         if isAnswerCorrect {
@@ -62,14 +61,10 @@ class ViewController: UIViewController {
         }else{
             sender.backgroundColor = UIColor.red
         }
+        countdownTimerFeedBackAnswer?.invalidate()
+        countdownTimerToAnswer?.invalidate()
+        updateInfoNextQuestion()
         
-        quizLogic.moveToNextQuestion()
-        updateQuestionUI()
-        
-        if quizLogic.isQuizComplete(){
-            quizLogic.setScore(newScore: 0)
-            countdownTimerToAnswer?.invalidate()
-        }
     }
     
     func updateQuestionUI(){
@@ -105,18 +100,26 @@ class ViewController: UIViewController {
            } else {
                timePassedToAnswer = 0
                secondsRemainingToAnswer = secondsToAnswer
-               
                countdownTimerToAnswer?.invalidate()
-               
                if !quizLogic.isQuizComplete(){
-                   quizLogic.moveToNextQuestion()
-                   startTimerToAnswer()
-                   updateQuestionUI()
+                   updateInfoNextQuestion()
                }
            }
     }
     
 
+    func updateInfoNextQuestion (){
+        if !quizLogic.isQuizComplete() {
+            quizLogic.moveToNextQuestion()
+            startTimerToAnswer()
+        }else{
+            quizLogic.setScore(newScore: 0)
+            countdownTimerToAnswer?.invalidate()
+            progressBarQuestion.progress = 1
+        }
+        updateQuestionUI()
+        progressBarAnswerTime.progress = 1
+    }
 }
 
 extension String {
